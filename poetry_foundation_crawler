@@ -1,0 +1,24 @@
+"""crawl over part of domain to find valid urls"""
+import urllib.request
+from urllib.request import urlopen
+
+list_url = []   #will be valid urls
+list_404 = []   #will be invalid urls
+
+
+def find_url(start, stop):
+    while start < stop:
+        url = "https://www.poetryfoundation.org/poems-and-poets/poems/detail/" + str(start)
+        print ("checking...  ", url)
+        check = urllib.request.urlopen(url)
+        print (check.getcode())
+        print (check)
+        start += 1
+        if str(check) == '404':
+            list_404.append(url)
+        else:
+            list_url.append(url)   
+    return list_404, list_url
+
+"""test run"""
+find_url(56000, 56100)
