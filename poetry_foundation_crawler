@@ -1,24 +1,26 @@
 """crawl over part of domain to find valid urls"""
-import urllib.request
-from urllib.request import urlopen
+import requests
 
 list_url = []   #will be valid urls
 list_404 = []   #will be invalid urls
 
+req = requests.get('https://www.poetryfoundation.org/poems-and-poets/poems/detail/50000')
 
-def find_url(start, stop):
-    while start < stop:
+def valid_urls(start, stop):
+    while start < stop+1:
         url = "https://www.poetryfoundation.org/poems-and-poets/poems/detail/" + str(start)
         print ("checking...  ", url)
-        check = urllib.request.urlopen(url)
-        print (check.getcode())
-        print (check)
+        req = requests.get(url)
+        status = req.status_code
+        print (status)
         start += 1
-        if str(check) == '404':
+        if status != 404:
+            list_url.append(url)
+        elif status == 404:
             list_404.append(url)
-        else:
-            list_url.append(url)   
-    return list_404, list_url
-
-"""test run"""
-find_url(56000, 56100)
+    print(len(list_url), "good urls found\n\nlist of urls saved at: 'poetry_urls.txt'")
+    file = open('poetry_urls.txt', 'w')
+    file.write(str(list_url))
+    file.close()
+    #return list_404, list_url #not returning because avoid over overuse mem when checking thousands of urls in one run
+    
